@@ -171,6 +171,11 @@ func (c *notificationController) Run(threadiness int, stopCh <-chan struct{}) {
 	defer runtimeutil.HandleCrash()
 	defer c.queue.ShutDown()
 
+	fmt.Println("11 ####################################################################")
+	fmt.Println("22 ####################################################################")
+	fmt.Println("33 ####################################################################")
+	fmt.Println("44 ####################################################################")
+
 	log.Warn("Controller is running.")
 	for i := 0; i < threadiness; i++ {
 		go wait.Until(func() {
@@ -188,6 +193,10 @@ func (c *notificationController) isSelfServiceConfigureApi(api api.API) bool {
 }
 
 func (c *notificationController) processResourceWithAPI(api api.API, resource v1.Object, logEntry *log.Entry, eventSequence *NotificationEventSequence) (map[string]string, error) {
+	fmt.Println("55 ####################################################################")
+	fmt.Println("66 ####################################################################")
+	fmt.Println("77 ####################################################################")
+
 	apiNamespace := api.GetConfig().Namespace
 	notificationsState := NewStateFromRes(resource)
 

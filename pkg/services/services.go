@@ -248,14 +248,23 @@ func (n *Notification) Preview() string {
 }
 
 func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources []TemplaterSource) (Templater, error) {
+
+	fmt.Println("getTemplater ##########################")
+	fmt.Println("getTemplater ##########################")
+	fmt.Println("getTemplater ##########################")
+
 	message, err := texttemplate.New(name).Funcs(f).Parse(n.Message)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("message ######## == ", message)
+
 	templaters := []Templater{func(notification *Notification, vars map[string]interface{}) error {
 		var messageData bytes.Buffer
+		fmt.Println("templaters #################")
 		if err := message.Execute(&messageData, vars); err != nil {
+			fmt.Println("error #################")
 			return err
 		}
 		if val := messageData.String(); val != "" {
