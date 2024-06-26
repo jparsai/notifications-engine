@@ -250,8 +250,6 @@ func (n *Notification) Preview() string {
 func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources []TemplaterSource) (Templater, error) {
 
 	fmt.Println("getTemplater ##########################")
-	fmt.Println("getTemplater ##########################")
-	fmt.Println("getTemplater ##########################")
 
 	message, err := texttemplate.New(name).Funcs(f).Parse(n.Message)
 	if err != nil {
@@ -263,8 +261,11 @@ func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources
 	templaters := []Templater{func(notification *Notification, vars map[string]interface{}) error {
 		var messageData bytes.Buffer
 		fmt.Println("templaters #################")
+		fmt.Println("vars ############ == ", vars)
+		fmt.Println("message ############ == ", message)
+
 		if err := message.Execute(&messageData, vars); err != nil {
-			fmt.Println("error #################")
+			fmt.Println("error #################", err)
 			return err
 		}
 		if val := messageData.String(); val != "" {
@@ -275,12 +276,17 @@ func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources
 	}}
 
 	for _, src := range sources {
+		fmt.Println("src ############ == ", src)
 		t, err := src.GetTemplater(name, f)
+		fmt.Println("t ############ == ", t)
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("888888888888")
 		templaters = append(templaters, t)
 	}
+
+	fmt.Println("9999999999999999")
 
 	return func(notification *Notification, vars map[string]interface{}) error {
 		for _, t := range templaters {
