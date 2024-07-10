@@ -39,6 +39,8 @@ type service struct {
 }
 
 func NewService(triggers map[string][]Condition) (*service, error) {
+	fmt.Println("######## triggers_NewService")
+
 	svc := service{
 		compiledConditions: map[string]*vm.Program{},
 		compiledOncePer:    map[string]*vm.Program{},
@@ -65,12 +67,16 @@ func NewService(triggers map[string][]Condition) (*service, error) {
 }
 
 func hash(input string) string {
+	fmt.Println("######## triggers_hash")
+
 	h := sha1.New()
 	_, _ = h.Write([]byte(input))
 	return base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 }
 
 func (svc *service) Run(triggerName string, vars map[string]interface{}) ([]ConditionResult, error) {
+	fmt.Println("######## triggers_Run")
+	//time.Sleep(2 * time.Minute)
 	t, ok := svc.triggers[triggerName]
 	if !ok {
 		return nil, fmt.Errorf("trigger '%s' is not configured", triggerName)

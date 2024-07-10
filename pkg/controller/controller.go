@@ -171,9 +171,8 @@ func (c *notificationController) Run(threadiness int, stopCh <-chan struct{}) {
 	defer runtimeutil.HandleCrash()
 	defer c.queue.ShutDown()
 
-	fmt.Println("Run ####################################################################")
-
 	log.Warn("Controller is running.")
+	fmt.Println("######## Controller_Run")
 	for i := 0; i < threadiness; i++ {
 		go wait.Until(func() {
 			for c.processQueueItem() {
@@ -190,8 +189,7 @@ func (c *notificationController) isSelfServiceConfigureApi(api api.API) bool {
 }
 
 func (c *notificationController) processResourceWithAPI(api api.API, resource v1.Object, logEntry *log.Entry, eventSequence *NotificationEventSequence) (map[string]string, error) {
-	fmt.Println("processResourceWithAPI ####################################################################")
-	
+
 	apiNamespace := api.GetConfig().Namespace
 	notificationsState := NewStateFromRes(resource)
 
@@ -266,6 +264,7 @@ func (c *notificationController) getDestinations(resource v1.Object, cfg api.Con
 }
 
 func (c *notificationController) processQueueItem() (processNext bool) {
+	fmt.Println("######## Controller_processQueueItem 11")
 	key, shutdown := c.queue.Get()
 	if shutdown {
 		processNext = false
@@ -349,12 +348,16 @@ func (c *notificationController) processQueueItem() (processNext bool) {
 			}
 		}
 	}
+	fmt.Println("######## Controller_processQueueItem 22")
 	logEntry.Info("Processing completed")
 
 	return
 }
 
 func (c *notificationController) processResource(api api.API, resource v1.Object, logEntry *log.Entry, eventSequence *NotificationEventSequence) {
+
+	fmt.Println("######## Controller_processResource 11")
+
 	annotations, err := c.processResourceWithAPI(api, resource, logEntry, eventSequence)
 	if err != nil {
 		logEntry.Errorf("Failed to process: %v", err)

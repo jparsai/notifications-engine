@@ -18,6 +18,9 @@ const (
 )
 
 func StateItemKey(isSelfConfig bool, apiNamespace, trigger string, conditionResult triggers.ConditionResult, dest services.Destination) string {
+
+	fmt.Println("######## State_StateItemKey")
+
 	var key string
 	if isSelfConfig {
 		key = fmt.Sprintf("%s:%s:%s:%s:%s", apiNamespace, trigger, conditionResult.Key, dest.Service, dest.Recipient)
@@ -36,6 +39,7 @@ type NotificationsState map[string]int64
 // truncate ensures that state has no more than specified number of items and
 // removes unnecessary items starting from oldest
 func (s NotificationsState) truncate(maxSize int) {
+	fmt.Println("######## State_truncate")
 	if cnt := len(s) - maxSize; cnt > 0 {
 		var keys []string
 		for k := range s {
@@ -53,6 +57,8 @@ func (s NotificationsState) truncate(maxSize int) {
 
 // SetAlreadyNotified set the state of given trigger/destination and return if state has been changed
 func (s NotificationsState) SetAlreadyNotified(isSelfConfig bool, apiNamespace, trigger string, result triggers.ConditionResult, dest services.Destination, isNotified bool) bool {
+	fmt.Println("######## State_SetAlreadyNotified")
+
 	key := StateItemKey(isSelfConfig, apiNamespace, trigger, result, dest)
 	if _, alreadyNotified := s[key]; alreadyNotified == isNotified {
 		return false
@@ -69,6 +75,8 @@ func (s NotificationsState) SetAlreadyNotified(isSelfConfig bool, apiNamespace, 
 }
 
 func (s NotificationsState) Persist(res metav1.Object) (map[string]string, error) {
+	fmt.Println("######## State_Persist")
+
 	s.truncate(notifiedHistoryMaxSize)
 
 	notifiedAnnotationKey := subscriptions.NotifiedAnnotationKey()
@@ -94,6 +102,8 @@ func (s NotificationsState) Persist(res metav1.Object) (map[string]string, error
 }
 
 func NewState(val string) NotificationsState {
+	fmt.Println("######## State_NewState")
+
 	if val == "" {
 		return NotificationsState{}
 	}
@@ -105,6 +115,8 @@ func NewState(val string) NotificationsState {
 }
 
 func NewStateFromRes(res metav1.Object) NotificationsState {
+	fmt.Println("######## State_NewStateFromRes")
+
 	notifiedAnnotationKey := subscriptions.NotifiedAnnotationKey()
 	if annotations := res.GetAnnotations(); annotations != nil {
 		return NewState(annotations[notifiedAnnotationKey])

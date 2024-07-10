@@ -1,8 +1,13 @@
 package text
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func Coalesce(first string, other ...string) string {
+	fmt.Println("######## string_Coalesce")
+
 	res := first
 	for i := range other {
 		if res != "" {
@@ -14,6 +19,8 @@ func Coalesce(first string, other ...string) string {
 }
 
 func SplitRemoveEmpty(in string, separator string) []string {
+	fmt.Println("######## string_SplitRemoveEmpty")
+
 	var res []string
 	for _, item := range strings.Split(in, separator) {
 		if item != "" {
