@@ -89,7 +89,8 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 
 				if err := api.Send(res.Object, []string{name}, dest); err != nil {
 					fmt.Println("######## template_CMD_14_error = ", err)
-					_, _ = fmt.Fprintf(cmdContext.stderr, "failed to notify '%s': %v\n", recipient, err)
+
+					_, _ = fmt.Fprintf(cmdContext.stderr, "#### failed to notify res = %s, name = %s, dest = %s, '%s': %v\n", res, name, dest, recipient, err)
 					return nil
 				}
 				fmt.Println("######## template_CMD_14")
