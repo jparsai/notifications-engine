@@ -41,39 +41,60 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 `, cmdContext.cliName, cmdContext.cliName),
 		Short: "Generates notification using the specified template and send it to specified recipients",
 		RunE: func(c *cobra.Command, args []string) error {
+			fmt.Println("######## template_CMD_1")
 			cancel := withDebugLogs()
 			defer cancel()
 			if len(args) < 2 {
 				return fmt.Errorf("expected two arguments, got %d", len(args))
 			}
+			fmt.Println("######## template_CMD_2")
 			name := args[0]
 			resourceName := args[1]
 			api, err := cmdContext.getAPI()
 			if err != nil {
+				fmt.Println("######## template_CMD_3_error = ", err)
 				_, _ = fmt.Fprintf(cmdContext.stderr, "failed to create API: %v\n", err)
 				return nil
 			}
+
+			fmt.Println("######## template_CMD_4")
 			api.AddNotificationService("console", services.NewConsoleService(cmdContext.stdout))
 
 			res, err := cmdContext.loadResource(resourceName)
 			if err != nil {
+				fmt.Println("######## template_CMD_5_error = ", err)
 				_, _ = fmt.Fprintf(cmdContext.stderr, "failed to load resource: %v\n", err)
 				return nil
 			}
 
+			fmt.Println("######## template_CMD_6")
+
 			for _, recipient := range recipients {
+				fmt.Println("######## template_CMD_7_recipient = ", recipient)
+
 				parts := strings.Split(recipient, ":")
+				fmt.Println("######## template_CMD_8_parts = ", parts)
+
 				dest := services.Destination{Service: parts[0]}
+				fmt.Println("######## template_CMD_9_dest = ", dest)
+
 				if len(parts) > 1 {
 					dest.Recipient = parts[1]
 				}
 
+				fmt.Println("######## template_CMD_10_res = ", res)
+				fmt.Println("######## template_CMD_11_res.Object = ", res.Object)
+				fmt.Println("######## template_CMD_12_name = ", name)
+				fmt.Println("######## template_CMD_13_dest = ", dest)
+
 				if err := api.Send(res.Object, []string{name}, dest); err != nil {
+					fmt.Println("######## template_CMD_14_error = ", err)
 					_, _ = fmt.Fprintf(cmdContext.stderr, "failed to notify '%s': %v\n", recipient, err)
 					return nil
 				}
+				fmt.Println("######## template_CMD_14")
 			}
-
+			fmt.Println("######## template_CMD_15")
 			return nil
 		},
 	}
