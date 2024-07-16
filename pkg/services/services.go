@@ -263,6 +263,9 @@ func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources
 	templaters := []Templater{func(notification *Notification, vars map[string]interface{}) error {
 		var messageData bytes.Buffer
 		fmt.Println("######## Service_getTemplater_1")
+		fmt.Println("######## Service_getTemplater_1_message = ", message)
+		fmt.Println("######## Service_getTemplater_1_messageData = ", messageData)
+		fmt.Println("######## Service_getTemplater_1_vars = ", vars)
 
 		if err := message.Execute(&messageData, vars); err != nil {
 			fmt.Println("######## Service_getTemplater_2_error = ", err)
