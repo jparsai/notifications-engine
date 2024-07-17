@@ -60,7 +60,6 @@ type Destination struct {
 }
 
 func (n *Notification) GetTemplater(name string, f texttemplate.FuncMap) (Templater, error) {
-	fmt.Println("######## Service_GetTemplater")
 
 	var sources []TemplaterSource
 	if n.AwsSqs != nil {
@@ -116,7 +115,6 @@ type NotificationService interface {
 }
 
 func NewService(serviceType string, optsData []byte) (NotificationService, error) {
-	fmt.Println("######## Service_NewService")
 	switch serviceType {
 	case "awssqs":
 		var opts AwsSqsOptions
@@ -232,7 +230,6 @@ func NewService(serviceType string, optsData []byte) (NotificationService, error
 }
 
 func (n *Notification) Preview() string {
-	fmt.Println("######## Service_Preview")
 
 	preview := ""
 	switch {
@@ -253,7 +250,7 @@ func (n *Notification) Preview() string {
 }
 
 func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources []TemplaterSource) (Templater, error) {
-	fmt.Println("######## Service_getTemplater")
+	fmt.Println("## pkg / services / service.go_getTemplater_1")
 
 	message, err := texttemplate.New(name).Funcs(f).Parse(n.Message)
 	if err != nil {
@@ -262,42 +259,34 @@ func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources
 
 	templaters := []Templater{func(notification *Notification, vars map[string]interface{}) error {
 		var messageData bytes.Buffer
-		fmt.Println("######## Service_getTemplater_1")
-		fmt.Println("######## Service_getTemplater_1_message = ", message)
-		fmt.Println("######## Service_getTemplater_1_messageData = ", messageData)
-		fmt.Println("######## Service_getTemplater_1_vars = ", vars)
+		fmt.Println("## pkg / services / service.go_getTemplater_2_message = ", message)
+		fmt.Println("## pkg / services / service.go_getTemplater_3_messageData = ", messageData)
+		fmt.Println("## pkg / services / service.go_getTemplater_4_vars = ", vars)
 
 		if err := message.Execute(&messageData, vars); err != nil {
-			fmt.Println("######## Service_getTemplater_2_error = ", err)
+			fmt.Println("## pkg / services / service.go_getTemplater_5_error = ", err)
 			return err
 		}
 		if val := messageData.String(); val != "" {
 			notification.Message = messageData.String()
 		}
-		fmt.Println("######## Service_getTemplater_3")
 		return nil
 	}}
 
 	for _, src := range sources {
 		t, err := src.GetTemplater(name, f)
-		fmt.Println("######## Service_getTemplater_4")
 		if err != nil {
 			return nil, err
 		}
 		templaters = append(templaters, t)
 	}
 
-	fmt.Println("######## Service_getTemplater_5")
 	return func(notification *Notification, vars map[string]interface{}) error {
-		fmt.Println("######## Service_getTemplater_6")
 		for _, t := range templaters {
-			fmt.Println("######## Service_getTemplater_7")
 			if err := t(notification, vars); err != nil {
-				fmt.Println("######## Service_getTemplater_8")
 				return err
 			}
 		}
-		fmt.Println("######## Service_getTemplater_9")
 		return nil
 	}, nil
 }

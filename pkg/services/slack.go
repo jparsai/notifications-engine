@@ -30,54 +30,45 @@ type SlackNotification struct {
 }
 
 func (n *SlackNotification) GetTemplater(name string, f texttemplate.FuncMap) (Templater, error) {
-	fmt.Println("######## Slack_GetTemplater")
 
 	slackAttachments, err := texttemplate.New(name).Funcs(f).Parse(n.Attachments)
 	if err != nil {
-		fmt.Println("######## Slack_GetTemplater_1_error = ", err)
 		return nil, err
 	}
 	slackBlocks, err := texttemplate.New(name).Funcs(f).Parse(n.Blocks)
 	if err != nil {
-		fmt.Println("######## Slack_GetTemplater_2_error", err)
 		return nil, err
 	}
 	groupingKey, err := texttemplate.New(name).Funcs(f).Parse(n.GroupingKey)
 	if err != nil {
-		fmt.Println("######## Slack_GetTemplater_3_error")
 		return nil, err
 	}
 
 	return func(notification *Notification, vars map[string]interface{}) error {
-		fmt.Println("######## Slack_GetTemplater_4_error")
 
 		if notification.Slack == nil {
 			notification.Slack = &SlackNotification{}
 		}
 		var slackAttachmentsData bytes.Buffer
 		if err := slackAttachments.Execute(&slackAttachmentsData, vars); err != nil {
-			fmt.Println("######## Slack_GetTemplater_5_error")
 			return err
 		}
 		notification.Slack.Attachments = slackAttachmentsData.String()
 
 		var slackBlocksData bytes.Buffer
 		if err := slackBlocks.Execute(&slackBlocksData, vars); err != nil {
-			fmt.Println("######## Slack_GetTemplater_6_error")
 			return err
 		}
 		notification.Slack.Blocks = slackBlocksData.String()
 
 		var groupingKeyData bytes.Buffer
 		if err := groupingKey.Execute(&groupingKeyData, vars); err != nil {
-			fmt.Println("######## Slack_GetTemplater_7_error")
 			return err
 		}
 		notification.Slack.GroupingKey = groupingKeyData.String()
 
 		notification.Slack.NotifyBroadcast = n.NotifyBroadcast
 		notification.Slack.DeliveryPolicy = n.DeliveryPolicy
-		fmt.Println("######## Slack_GetTemplater_8")
 		return nil
 	}, nil
 }
@@ -104,7 +95,6 @@ func NewSlackService(opts SlackOptions) NotificationService {
 }
 
 func buildMessageOptions(notification Notification, dest Destination, opts SlackOptions) (*SlackNotification, []slack.MsgOption, error) {
-	fmt.Println("######## Slack_buildMessageOptions")
 
 	msgOptions := []slack.MsgOption{slack.MsgOptionText(notification.Message, false)}
 	slackNotification := &SlackNotification{}
@@ -122,11 +112,9 @@ func buildMessageOptions(notification Notification, dest Destination, opts Slack
 		}
 	}
 	if notification.Slack != nil {
-		fmt.Println("######## Slack_buildMessageOptions_1")
 		attachments := make([]slack.Attachment, 0)
 		if notification.Slack.Attachments != "" {
 			if err := json.Unmarshal([]byte(notification.Slack.Attachments), &attachments); err != nil {
-				fmt.Println("######## Slack_buildMessageOptions_2_error = ", err)
 				return nil, nil, fmt.Errorf("failed to unmarshal attachments '%s' : %v", notification.Slack.Attachments, err)
 			}
 		}
@@ -134,11 +122,9 @@ func buildMessageOptions(notification Notification, dest Destination, opts Slack
 		blocks := slack.Blocks{}
 		if notification.Slack.Blocks != "" {
 			if err := json.Unmarshal([]byte(notification.Slack.Blocks), &blocks); err != nil {
-				fmt.Println("######## Slack_buildMessageOptions_3_error")
 				return nil, nil, fmt.Errorf("failed to unmarshal blocks '%s' : %v", notification.Slack.Blocks, err)
 			}
 		}
-		fmt.Println("######## Slack_buildMessageOptions_4")
 		msgOptions = append(msgOptions, slack.MsgOptionAttachments(attachments...), slack.MsgOptionBlocks(blocks.BlockSet...))
 		slackNotification = notification.Slack
 	}
@@ -146,16 +132,13 @@ func buildMessageOptions(notification Notification, dest Destination, opts Slack
 	if opts.DisableUnfurl {
 		msgOptions = append(msgOptions, slack.MsgOptionDisableLinkUnfurl(), slack.MsgOptionDisableMediaUnfurl())
 	}
-	fmt.Println("######## Slack_buildMessageOptions_5")
 	return slackNotification, msgOptions, nil
 }
 
 func (s *slackService) Send(notification Notification, dest Destination) error {
-	fmt.Println("######## Slack_Send")
 
 	slackNotification, msgOptions, err := buildMessageOptions(notification, dest, s.opts)
 	if err != nil {
-		fmt.Println("######## Slack_Send_1")
 		return err
 	}
 	return slackutil.NewThreadedClient(
@@ -177,7 +160,6 @@ func (s *slackService) GetSigningSecret() string {
 }
 
 func newSlackClient(opts SlackOptions) *slack.Client {
-	fmt.Println("######## Slack_newSlackClient")
 
 	apiURL := slack.APIURL
 	if opts.ApiURL != "" {
@@ -191,7 +173,6 @@ func newSlackClient(opts SlackOptions) *slack.Client {
 }
 
 func isValidIconURL(iconURL string) bool {
-	fmt.Println("######## Slack_isValidIconURL")
 
 	_, err := url.ParseRequestURI(iconURL)
 	if err != nil {

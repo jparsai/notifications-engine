@@ -17,7 +17,6 @@ type service struct {
 }
 
 func NewService(templates map[string]services.Notification) (*service, error) {
-	fmt.Println("######## templates_NewService")
 
 	f := sprig.TxtFuncMap()
 	delete(f, "env")
@@ -35,7 +34,6 @@ func NewService(templates map[string]services.Notification) (*service, error) {
 }
 
 func (s *service) FormatNotification(vars map[string]interface{}, templates ...string) (*services.Notification, error) {
-	fmt.Println("######## templates_FormatNotification")
 
 	var notification services.Notification
 	for _, templateName := range templates {
