@@ -41,7 +41,7 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 `, cmdContext.cliName, cmdContext.cliName),
 		Short: "Generates notification using the specified template and send it to specified recipients",
 		RunE: func(c *cobra.Command, args []string) error {
-			fmt.Println("## pkg / cmd / template.go_RunE_1")
+			fmt.Println("\n## pkg / cmd / template.go_RunE_1")
 			cancel := withDebugLogs()
 			defer cancel()
 			if len(args) < 2 {
@@ -52,7 +52,7 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 			resourceName := args[1]
 			api, err := cmdContext.getAPI()
 			if err != nil {
-				fmt.Println("## pkg / cmd / template.go_RunE_2_error = ", err)
+				fmt.Println("\n## pkg / cmd / template.go_RunE_2_error = ", err)
 				_, _ = fmt.Fprintf(cmdContext.stderr, "failed to create API: %v\n", err)
 				return nil
 			}
@@ -61,13 +61,13 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 
 			res, err := cmdContext.loadResource(resourceName)
 			if err != nil {
-				fmt.Println("## pkg / cmd / template.go_RunE_3_error = ", err)
+				fmt.Println("\n## pkg / cmd / template.go_RunE_3_error = ", err)
 				_, _ = fmt.Fprintf(cmdContext.stderr, "failed to load resource: %v\n", err)
 				return nil
 			}
 
 			for _, recipient := range recipients {
-				fmt.Println("## pkg / cmd / template.go_RunE_4_recipient = ", recipient)
+				fmt.Println("\n## pkg / cmd / template.go_RunE_4_recipient = ", recipient)
 
 				parts := strings.Split(recipient, ":")
 				dest := services.Destination{Service: parts[0]}
@@ -77,14 +77,14 @@ func newTemplateNotifyCommand(cmdContext *commandContext) *cobra.Command {
 				}
 
 				if err := api.Send(res.Object, []string{name}, dest); err != nil {
-					fmt.Println("## pkg / cmd / template.go_RunE_5_error = ", err)
+					fmt.Println("\n## pkg / cmd / template.go_RunE_5_error = ", err)
 
-					_, _ = fmt.Fprintf(cmdContext.stderr, "#### failed to notify res = %s, name = %s, dest = %s, '%s': %v\n", res, name, dest, recipient, err)
+					_, _ = fmt.Fprintf(cmdContext.stderr, "#### failed to notify '%s': %v\n", recipient, err)
 					return nil
 				}
 
 			}
-			fmt.Println("## pkg / cmd / template.go_RunE_6")
+			fmt.Println("\n## pkg / cmd / template.go_RunE_6")
 			return nil
 		},
 	}
