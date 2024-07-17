@@ -250,7 +250,7 @@ func (n *Notification) Preview() string {
 }
 
 func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources []TemplaterSource) (Templater, error) {
-	fmt.Println("\n## pkg / services / service.go_getTemplater_1")
+	fmt.Println("\n## pkg/services/service.go_getTemplater_1")
 
 	message, err := texttemplate.New(name).Funcs(f).Parse(n.Message)
 	if err != nil {
@@ -259,10 +259,10 @@ func (n *Notification) getTemplater(name string, f texttemplate.FuncMap, sources
 
 	templaters := []Templater{func(notification *Notification, vars map[string]interface{}) error {
 		var messageData bytes.Buffer
-		fmt.Println("\n## pkg / services / service.go_getTemplater_2_message = ", message)
+		fmt.Println("\n## pkg/services/service.go_getTemplater_2_message = ", message)
 
 		if err := message.Execute(&messageData, vars); err != nil {
-			fmt.Println("\n## pkg / services / service.go_getTemplater_5_error = ", err)
+			fmt.Println("\n## pkg/services/service.go_getTemplater_5_error = ", err)
 			return err
 		}
 		if val := messageData.String(); val != "" {
